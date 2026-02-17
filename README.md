@@ -16,14 +16,14 @@ A fast and simple tmux session manager written in Rust.
 cargo build --release
 ```
 
-The binary will be available at `target/release/minigrep`.
+The binary will be available at `target/release/tmx-rs`.
 
 ## Usage
 
 Simply run the binary:
 
 ```bash
-minigrep
+tmx-rs
 ```
 
 The tool will:
