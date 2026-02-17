@@ -14,7 +14,7 @@ pub fn create_or_attach() -> Result<(), InquireError> {
 
     if has_tmux_prefix(&path) == true {
         session = get_active_session(&path);
-        println!("Outside tmux has prefix: session {}", session);
+        // println!("Outside tmux has prefix: session {}", session);
         
         process::Command::new("tmux")
             .args(["attach-session", "-t", &session])
@@ -22,6 +22,7 @@ pub fn create_or_attach() -> Result<(), InquireError> {
             .expect("Error in attach session");
 
         Ok(())
+
     }else{
         session = get_last_two_components(&path);
         println!("Outside tmux and dot not have prefix: session {}", session);
@@ -32,7 +33,7 @@ pub fn create_or_attach() -> Result<(), InquireError> {
             .expect("Error in create session");
 
         process::Command::new("tmux")
-            .args(["attach-session", "-t", &session])
+            .args(["attach-session", "-t", &session.trim()])
             .status()
             .expect("Error in attach-session");
 

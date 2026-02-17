@@ -5,7 +5,7 @@ mod tmx;
 
 use mode::tmux;
 use tmx::have_config;
-use tmx::outside::create_or_attach;
+use tmx::{inside, outside};
 use inquire::InquireError;
 
 fn main() -> Result<(), InquireError> {
@@ -15,24 +15,29 @@ fn main() -> Result<(), InquireError> {
 
     let mut mode: Option<mode::Command> = None;
 
-    // match mode_input {
-    //    Some(m) => {
-    //         match m.as_str() {
-    //             "delete" => {mode = Some(mode::Command::Delete)},
-    //             _ => {mode = Some(mode::Command::CreateOrAttach)},
-    //         }
-    //    }
-    //    None => mode = Some(mode::Command::CreateOrAttach)
-    // }
-
-    match mode_input {
-       Some(m) => {
-            match m.as_str() {
-                // "delete" => {mode = Some(mode::Command::Delete)},
-                _ => { create_or_attach() },
-            }
+    match tmux::in_tmux() {
+       true => {
+           match mode_input {
+               Some(m) => {
+                   match m.as_str() {
+                       // "delete" => {mode = Some(mode::Command::Delete)},
+                       _ => { inside::create_or_attach() },
+                   }
+               }
+               None => { inside::create_or_attach() } 
+           }
+       },
+       false => {
+           match mode_input {
+               Some(m) => {
+                   match m.as_str() {
+                       // "delete" => {mode = Some(mode::Command::Delete)},
+                       _ => { outside::create_or_attach() },
+                   }
+               }
+               None => { outside::create_or_attach() } 
        }
-       None => { create_or_attach() } 
+    }
     }
     
     // let in_tmux = tmux::in_tmux();

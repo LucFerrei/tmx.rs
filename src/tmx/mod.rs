@@ -4,7 +4,7 @@ pub mod fzf;
 
 use std::process;
 use std::fs::File;
-use std::path::Path;
+use std::path::{Path, Component};
 
 const CONFIG_PATH: &str = "/home/lucas/.config/tmx/tmx.conf";
 
@@ -32,25 +32,28 @@ pub fn get_active_session(path: &String) -> String {
     active_session
 }
 
+
 pub fn get_last_two_components(path_str: &str) -> String {
     let path = Path::new(path_str);
     
-    // Get components from the end, take 2, and collect them into a vector
     let last_two: Vec<_> = path
         .components()
+        .filter(|c| matches!(c, Component::Normal(_))) // <--- IGNORE "/" OR "C:\"
         .rev()
         .take(2)
-        .map(|c| c.as_os_str())
         .collect();
 
-    // Reverse them back to original order and join with the separator
+    // If we found nothing (e.g. path was just "/"), return a fallback
+    if last_two.is_empty() {
+        return "default".to_string();
+    }
+
     last_two.into_iter()
         .rev()
         .collect::<std::path::PathBuf>()
         .to_string_lossy()
         .into_owned()
 }
-
 // let args: Vec<String> = args().collect();
 //
 // let mode_input = args.get(1);
