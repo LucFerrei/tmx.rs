@@ -1,0 +1,9 @@
+[package]
+name = "minigrep"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+walkdir = "2"
+inquire = "0.7"
+fuzzy-matcher = "0.3"
