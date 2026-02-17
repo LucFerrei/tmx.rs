@@ -36,25 +36,7 @@ fn main() -> Result<(), InquireError> {
                    }
                }
                None => { outside::create_or_attach() } 
-       }
+           }
+        }
     }
-    }
-    
-    // let in_tmux = tmux::in_tmux();
-    // match have_config() {
-    //     Ok(_) => println!("Há aquivo de config"),
-    //     Err(_) => println!("Não há arquivo de config"),
-    // };
-    //
-    // // tmx::fzf::fzf();
-    // match tmux::has_tmux_server() {
-    //     true => println!("há server"),
-    //     false => println!("não há server")
-    // }
-    //
-    // match tmx::fzf::fzf(Some(tmx::fzf::list_active_sessions()), tmx::fzf::get_inactive_dirs()) {
-    //     Ok(choice) => println!("{}", choice),
-    //     Err(_) => println!("Error")
-    // }
-
 }
