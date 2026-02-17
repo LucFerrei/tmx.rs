@@ -1,8 +1,10 @@
 use std::process;
+use inquire::ui::{Color, RenderConfig, Styled};
 use inquire::{InquireError, Select};
 use walkdir::WalkDir;
 
 use super::super::mode::tmux;
+
 
 pub fn list_active_sessions() -> Vec<String> {
     let res = process::Command::new("tmux")
@@ -29,6 +31,11 @@ pub fn get_inactive_dirs() -> Vec<String> {
 }
 
 pub fn fzf(mut active_sessions: Option<Vec<String>>, inactive: Vec<String>) -> Result<String, InquireError> {
+
+    let render_config = RenderConfig::default()
+            .with_prompt_prefix(Styled::new("🔍").with_fg(Color::LightBlue))
+            .with_highlighted_option_prefix(Styled::new("👉").with_fg(Color::LightYellow));
+
     let mut dirs: Vec<String> = Vec::new();
 
     if let Some(dir) = active_sessions {
@@ -37,6 +44,7 @@ pub fn fzf(mut active_sessions: Option<Vec<String>>, inactive: Vec<String>) -> R
 
     dirs.extend(inactive);
     let answer = Select::new("Select a directory:", dirs)
+        .with_render_config(render_config)
         .prompt()?;
 
     Ok(answer)

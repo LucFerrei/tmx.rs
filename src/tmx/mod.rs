@@ -32,40 +32,23 @@ pub fn get_active_session(path: &String) -> String {
     active_session
 }
 
-
 pub fn get_last_two_components(path_str: &str) -> String {
-    let path = Path::new(path_str);
+    let path = std::path::Path::new(path_str);
     
     let last_two: Vec<_> = path
         .components()
-        .filter(|c| matches!(c, Component::Normal(_))) // <--- IGNORE "/" OR "C:\"
+        .filter(|c| matches!(c, std::path::Component::Normal(_)))
         .rev()
         .take(2)
         .collect();
 
-    // If we found nothing (e.g. path was just "/"), return a fallback
-    if last_two.is_empty() {
-        return "default".to_string();
-    }
-
-    last_two.into_iter()
+    let full_name = last_two.into_iter()
         .rev()
         .collect::<std::path::PathBuf>()
         .to_string_lossy()
-        .into_owned()
+        .into_owned();
+
+    full_name
+        .replace('.', "_")
+        .replace(':', "_")
 }
-// let args: Vec<String> = args().collect();
-//
-// let mode_input = args.get(1);
-//
-// let mut mode: Option<mode::Command> = None;
-//
-// match mode_input {
-//    Some(m) => {
-//         match m.as_str() {
-//             "delete" => {mode = Some(mode::Command::Delete)},
-//             _ => {mode = Some(mode::Command::Delete)},
-//         }
-//    }
-//    None => mode = Some(mode::Command::CreateOrAttach)
-// }
