@@ -1,11 +1,14 @@
-use std::process;
+use std::{process, vec};
 use inquire::ui::{Color, RenderConfig, Styled};
 use inquire::{InquireError, Select};
 use walkdir::WalkDir;
+use crate::tmx::config::transform_config_to_vector;
+
 use super::get_last_two_components;
 
 use super::super::mode::tmux;
 
+const DEFAULT_PATH: &str = "/home/lucas/";
 
 pub fn list_active_sessions() -> Vec<String> {
     let res = process::Command::new("tmux")
@@ -20,15 +23,22 @@ pub fn list_active_sessions() -> Vec<String> {
         .collect()
 }
 
-pub fn get_inactive_dirs() -> Vec<String> {
-    // TODO: read dirs from config or default
-    WalkDir::new("/home/lucas/")
-        .max_depth(1)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.file_type().is_dir())
-        .map(|e| e.path().display().to_string())
-        .collect()
+pub fn get_inactive_dirs(paths: Vec<String>) -> Vec<String> {
+    let mut inactive_dirs: Vec<String> = Vec::new();
+    
+    for path in paths {
+        let res: Vec<String> = WalkDir::new(path)
+            .max_depth(1)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_type().is_dir())
+            .map(|e| e.path().display().to_string())
+            .collect();
+
+        inactive_dirs.extend(res);
+
+    }
+    inactive_dirs
 }
 
 fn sanitize_dir(active_sessions: Vec<String>, inactive_dirs: Vec<String>) -> Vec<String> {
@@ -76,15 +86,18 @@ pub fn fzf(mut active_sessions: Option<Vec<String>>, inactive: Vec<String>) -> R
 
 pub fn fzf_dir() -> Result<String, InquireError> {
     let is_running = tmux::has_tmux_server();
+    let mut dirs: Vec<String>;
+    let inactive_dirs = transform_config_to_vector(); 
 
+    //TODO: remove vector from inactive_dirs
     if is_running {
         let active_sessions = list_active_sessions();
-        let inactive = get_inactive_dirs();
+        let inactive = get_inactive_dirs(inactive_dirs);
 
         let res = fzf(Some(active_sessions), inactive)?;
         Ok(res)
     }else {
-        let inactive = get_inactive_dirs();
+        let inactive = get_inactive_dirs(inactive_dirs);
 
         let res = fzf(None, inactive)?;
         Ok(res)

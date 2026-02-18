@@ -1,6 +1,8 @@
 pub mod inside;
 pub mod outside;
 pub mod fzf;
+pub mod sessionizer;
+pub mod config;
 
 use std::process;
 use std::fs::File;
