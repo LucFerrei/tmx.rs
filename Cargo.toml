@@ -7,3 +7,5 @@ edition = "2024"
 walkdir = "2"
 inquire = "0.7"
 fuzzy-matcher = "0.3"
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "1.0.2"
